@@ -8,7 +8,7 @@ Sistema web administrativo para gestión de expedientes y órdenes de pago.
 - HTML5/CSS3
 
 ## Estructura
-- `/php` – scripts backend
+- `/wedev` – scripts backend
 - `/js` – lógica cliente (Tabulator)
 - `/css` – estilos
 - `/assets` – imágenes y recursos
