@@ -1,0 +1,128 @@
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f3f4f6;
+}
+
+.dashboard-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: linear-gradient(180deg, #003973 0%, #005aa7 100%);
+  color: white;
+  width: 250px;
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: transparent;
+}
+
+.toggle-btn {
+  font-size: 20px;
+  background: none;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu ul li {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.menu ul li a {
+  text-decoration: none;
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.menu ul li a i {
+  margin-right: 10px;
+  font-size: 18px;
+}
+
+.menu ul li.logout {
+  margin-top: auto;
+  font-weight: bold;
+}
+
+.menu ul li span {
+  transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .menu ul li span {
+  display: none;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+.search-bar {
+  position: relative;
+  max-width: 400px;
+  margin-bottom: 2rem;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.search-bar .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.card i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #007BFF;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}

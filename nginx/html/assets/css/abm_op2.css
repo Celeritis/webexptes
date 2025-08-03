@@ -1,0 +1,670 @@
+/* abm_op2.css - versión 0017 - 12/07/25 - 13:14 */
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f9ff;
+}
+
+input:focus, select:focus, textarea:focus {
+  background-color: #fffcc4;
+}
+
+.breadcrumb {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.breadcrumb a {
+  color: #2575fc;
+  text-decoration: none;
+}
+
+.botonera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.botonera button {
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  margin: 4px;
+  background: #2575fc;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.botonera button:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+#panelGrid {
+  background-color: #d4f9e5;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#tablaOP {
+  min-height: 400px;
+  background: white;
+}
+
+.tabulator .tabulator-row.tabulator-selected {
+  background-color: #cce5ff !important;
+}
+
+.modalFormulario  {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+}
+
+.modalFormulario .contenido {
+  background: #fff;
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+  .modalFormulario .contenido {
+    width: 95% !important;
+  }
+}
+
+.modalFormulario .contenido form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modalFormulario .contenido form .campo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.modalFormulario .contenido form .campo label {
+  min-width: 100px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+.modalFormulario .contenido form .campo input,
+.modalFormulario .contenido form .campo select,
+.modalFormulario .contenido form .campo textarea {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modalFormulario .contenido form textarea {
+  resize: vertical;
+}
+
+.modalFormulario .contenido form .botones {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.cerrar-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  font-size: 1.4rem;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+.cerrar-modal:hover {
+  color: #000;
+}
+input#monto_total, input#monto_pagado_total {
+  text-align: left;
+  font-family: monospace;
+  width: calc(100% - 2px);
+  box-sizing: border-box;
+  padding-left: 14px;
+  appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Nuevos estilos para mensajes de error como globos */
+.campo-error {
+  position: relative; /* Asegura que el mensaje de error se posicione relativo a este contenedor */
+}
+
+.mensaje-error {
+  position: absolute; /* Debe ser absolute para posicionarse dentro de .campo-error */
+  left: 0; /* Lo posicionamos al inicio del campo */
+  bottom: -22px; /* Mantén el espacio debajo del campo */
+  font-size: 0.75rem;
+  color: #d32f2f;
+  background: #fce4ec; /* Rosa suave */
+  padding: 4px 8px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  white-space: nowrap;
+  z-index: 10020;
+  max-width: 100%; /* Permitir que ocupe todo el ancho disponible del contenedor padre */
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.mensaje-error:before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 15px; /* Ajusta este valor si es necesario para centrar la flecha con el inicio del texto */
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #fce4ec;
+}
+
+.campo-con-error input,
+.campo-con-error select,
+.campo-con-error textarea {
+  border-color: #f8bbd0 !important;
+  background-color: #fff !important;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-mensaje {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* fondo difuminado */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10010;
+}
+
+.modal-busqueda {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10010; /* Mayor que modal-mensaje (10003) */
+}
+
+.modal-busqueda .mensaje-error {
+  z-index: 10020; /* Mayor que el modal-busqueda */
+  position: absolute;
+}
+
+.modal-busqueda .campo-error .mensaje-error {
+  bottom: -25px; /* Ajusta posición para el modal de búsqueda */
+}
+
+.modal-contenido {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px 30px;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-titulo {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2a466b;
+}
+
+#mensajeTexto {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 20px;
+}
+  #mensajeTexto ul {
+  padding-left: 0;
+  margin: 10px 0;
+}
+
+#mensajeTexto li {
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-left: 3px solid #007bff;
+  border-radius: 4px;
+  color: #333;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+#mensajeTexto strong {
+  color: #2a466b;
+}
+
+#mensajeTexto .emoji {
+  margin-right: 6px;
+}
+
+.btn-aceptar {
+  background-color: #2a466b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-aceptar:hover {
+  background-color: #3e5b85;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+#btnBusquedaAvanzada, #btnQuitarFiltros {
+  background: none;
+  color: #2575fc;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  margin: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#btnBusquedaAvanzada:hover, #btnQuitarFiltros:hover {
+  background-color: #f0f7ff;
+}
+
+#btnQuitarFiltros {
+  color: #dc3545;
+}
+
+#btnQuitarFiltros:hover {
+  background-color: #fff0f0;
+}
+
+/* Estilos para el modal de búsqueda avanzada */
+#modalBusquedaAvanzada .modal-contenido {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+  animation: fadeIn 0.3s ease-out;
+}
+
+#modalBusquedaAvanzada .campo-container {
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+#modalBusquedaAvanzada .campo-container:hover {
+  background-color: #edf3ff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#modalBusquedaAvanzada .campo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#modalBusquedaAvanzada input {
+  transition: all 0.2s ease;
+}
+
+#modalBusquedaAvanzada input:focus {
+  border-color: #2a466b !important;
+  box-shadow: 0 0 0 2px rgba(42, 70, 107, 0.2);
+  outline: none;
+}
+
+/* Estilos para mensajes de error */
+#modalBusquedaAvanzada .campo-error .mensaje-error {
+  background-color: #fff5f5;
+  color: #d32f2f;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  margin-top: 5px;
+  border-left: 3px solid #d32f2f;
+}
+
+#modalBusquedaAvanzada .campo-error input {
+  border-color: #f8bbd0 !important;
+}
+
+/* Animación para el modal */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+#modalBusquedaAvanzada .campo label {
+  margin-bottom: 5px; /* Espacio adicional bajo el label */
+}
+
+/* Estilos específicos para mensajes de error en el modal de búsqueda avanzada */
+#modalBusquedaAvanzada .campo-error {
+  position: relative;
+  margin-bottom: 25px; /* Espacio para el mensaje de error */
+}
+
+#modalBusquedaAvanzada .mensaje-error {
+  position: absolute;
+  bottom: -22px; /* Posición fija debajo del campo */
+  left: 0;
+  width: 100%;
+  margin-top: 4px; /* Espacio adicional */
+}
+
+#modalBusquedaAvanzada .mensaje-error:before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 15px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #fce4ec;
+}
+
+#modalBusquedaAvanzada .campo-con-error input,
+#modalBusquedaAvanzada .campo-con-error select,
+#modalBusquedaAvanzada .campo-con-error textarea {
+  border-color: #f8bbd0 !important;
+  background-color: #fff !important;
+}
+
+#modalBusquedaAvanzada .campo input,
+#modalBusquedaAvanzada .campo select {
+  padding: 8px 12px; /* Más padding para mejor apariencia */
+}
+
+/* Estilo para el foco en los campos del modal de búsqueda avanzada */
+#modalBusquedaAvanzada input:focus,
+#modalBusquedaAvanzada select:focus,
+#modalBusquedaAvanzada textarea:focus {
+  background-color: #fffcc4 !important;
+  outline: none;
+  border-color: #2a466b !important;
+}
+
+/* Estilo para limpiar el error cuando el campo es válido */
+#modalBusquedaAvanzada .campo-error input:valid,
+#modalBusquedaAvanzada .campo-error input:focus:valid {
+    border-color: #d0ddec !important;
+    background-color: #fff !important;
+}
+
+/* Transición suave para los cambios de estilo */
+#modalBusquedaAvanzada input,
+#modalBusquedaAvanzada select,
+#modalBusquedaAvanzada textarea {
+    transition: all 0.3s ease;
+}
+
+#mensajeEmergente {
+  position: fixed;
+  z-index: 10100; /* Mayor que cualquier otro modal */
+}
+
+/* Estilos para el nuevo modal de búsqueda */
+
+#mensajeBusquedaAvanzada {
+  position: fixed;
+  z-index: 10101; /* Mayor que cualquier otro modal */
+}
+#mensajeBusquedaAvanzada .modal-contenido {
+  min-width: 300px;
+}
+
+.barra-progreso {
+  width: 100%;
+  height: 6px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.barra-progreso .progreso {
+  height: 100%;
+  width: 0%;
+  background-color: #4CAF50;
+  transition: width 0.3s ease;
+}
+
+.btn-cancelar {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.btn-cancelar:hover {
+  background-color: #c62828;
+}
+
+/* estos son los estilos de mi modal-sino */
+
+/* Fondo semitransparente específico para modal-sino (oculto por defecto) */
+.modal-sino-background {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Clase para mostrar el modal-sino */
+.modal-sino-background.modal-sino-show {
+  display: flex;
+}
+
+/* Contenedor central de modal-sino */
+.modal-sino-contenido {
+  position: relative;
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+/* Botón de cerrar único para modal-sino */
+.modal-sino-cerrar {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Título del modal-sino */
+.modal-sino-titulo {
+  text-align: left;
+  margin-bottom: 15px;
+  color: #2a466b;
+  font-size: 1.25rem;
+}
+
+/* Texto de contenido de modal-sino */
+.modal-sino-texto {
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: #3a5b8c;
+  text-align: left;
+}
+
+/* Contenedor de botones de modal-sino */
+.modal-sino-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Botón primario de modal-sino */
+.modal-sino-btn-primary {
+  background-color: #2a466b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-sino-btn-primary:hover {
+  background-color: #203a57;
+}
+
+/* Botón secundario de modal-sino */
+.modal-sino-btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.modal-sino-btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Modal temporizado */
+/* fondo semitransparente (oculto por defecto) */
+.modal-temporizado-fondo {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 10101;
+}
+
+/* clase que activa la visibilidad */
+.modal-temporizado-fondo.modal-temporizado-mostrar {
+  display: flex;
+}
+
+/* caja central */
+.modal-temporizado-contenido {
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  max-width: 300px;
+  width: 80%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+/* título */
+.modal-temporizado-titulo {
+  margin-bottom: 10px;
+  color: #2a466b;
+  font-size: 1.25rem;
+}
+
+/* texto */
+.modal-temporizado-texto {
+  font-size: 16px;
+  color: #3a5b8c;
+}
+
+
+/* Modal de Mensaje Temporal */
+/* fondo semitransparente (oculto por defecto) */
+.modal-mensajetempo-fondo {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 10102;
+}
+
+/* clase que activa la visibilidad */
+.modal-mensajetempo-fondo.modal-mensajetempo-mostrar {
+  display: flex;
+}
+
+/* caja central */
+.modal-mensajetempo-contenido {
+  background: #fff;
+  padding: 25px;
+  border-radius: 8px;
+  max-width: 300px;
+  width: 80%;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+/* texto */
+.modal-mensajetempo-texto {
+  font-size: 16px;
+  color: #3a5b8c;
+}
+
+
+/* FIN Agregar estos estilos al modal de búsqueda avanzada  12/07/25 - 13:14 */

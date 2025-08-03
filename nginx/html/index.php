@@ -1,0 +1,237 @@
+<?php
+define('RUTA_BASE', 'C:/WebExptes');
+require_once RUTA_BASE . '/config/conexion.php';
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebExptes - Login</title>
+    <style>
+        :root {
+            --color-primary: #2575fc;
+            --color-secondary: #6a11cb;
+            --color-error: #e74c3c;
+            --color-text: #333;
+            --color-light: #f8f9fa;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--color-light) 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        
+        .login-header h1 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .login-form {
+            padding: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text);
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            border-color: var(--color-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.3);
+        }
+        
+        .error-message {
+            color: var(--color-error);
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            min-height: 20px;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                border-radius: 8px;
+            }
+            
+            .login-header {
+                padding: 20px 15px;
+            }
+            
+            .login-form {
+                padding: 20px 15px;
+            }
+            
+            .form-group input {
+                padding: 10px 12px;
+            }
+            
+            .btn-login {
+                padding: 12px;
+            }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>WebExptes</h1>
+        </div>
+        
+        <div class="login-form">
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Usuario:</label>
+                    <input type="text" id="username" name="username" required 
+                           placeholder="Ej: admin" autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="••••••••" autocomplete="current-password">
+                </div>
+                
+                <button type="submit" class="btn-login" id="loginButton">
+                    <span id="buttonText">Ingresar</span>
+                    <span id="buttonLoader" class="loading" style="display:none;"></span>
+                </button>
+                
+                <div id="errorMessage" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('errorMessage');
+            const buttonText = document.getElementById('buttonText');
+            const buttonLoader = document.getElementById('buttonLoader');
+            
+            // Mostrar loader
+            buttonText.style.display = 'none';
+            buttonLoader.style.display = 'inline-block';
+            errorElement.textContent = '';
+            
+            // Validación básica
+            if (!username || !password) {
+                errorElement.textContent = 'Complete todos los campos';
+                buttonText.style.display = 'inline';
+                buttonLoader.style.display = 'none';
+                return;
+            }
+            
+            try {
+                const response = await fetch('auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    window.location.href = data.redirect || 'bienvenida.php';
+                } else {
+                    errorElement.textContent = data.message || 'Usuario o contraseña incorrectos';
+                }
+            } catch (error) {
+                errorElement.textContent = 'Error de conexión';
+                console.error('Error:', error);
+            } finally {
+                buttonText.style.display = 'inline';
+                buttonLoader.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

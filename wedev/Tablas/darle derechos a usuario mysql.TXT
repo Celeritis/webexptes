@@ -1,0 +1,16 @@
+
+mysql -u root -p
+
+select user,host from mysql.user;
+
+CREATE USER IF NOT EXISTS 'rene'@'localhost' IDENTIFIED BY 'tu_contraseña_segura';
+
+
+GRANT ALL PRIVILEGES ON webexptes.* TO 'rene'@'localhost';
+GRANT ALL PRIVILEGES ON webexptes.* TO 'rene'@'%';
+
+FLUSH PRIVILEGES;
+
+QUITAR:
+REVOKE ALL PRIVILEGES ON webexptes.* FROM 'rene'@'localhost';
+REVOKE ALL PRIVILEGES ON webexptes.* FROM 'rene'@'%';

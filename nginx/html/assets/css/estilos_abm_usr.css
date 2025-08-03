@@ -1,0 +1,202 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f4f9ff;
+}
+
+input:focus, select:focus, textarea:focus {
+  background-color: #fffcc4;
+  outline: none;
+}
+
+.breadcrumb {
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.breadcrumb a {
+  color: #2575fc;
+  text-decoration: none;
+}
+
+.botonera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.botonera button {
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  background: #2575fc;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.botonera button:hover {
+  opacity: 0.9;
+}
+
+#panelGrid {
+  background-color: #d4f9e5;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+#tablaUsuarios {
+  min-height: 400px;
+  background: white;
+}
+
+/* Modal */
+.modalFormulario {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.modalFormulario .contenido {
+  background: #fff;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  margin: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.modalFormulario .cerrar-modal {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  font-size: 1.4rem;
+  border: none;
+  cursor: pointer;
+  color: #666;
+}
+
+.modalFormulario .cerrar-modal:hover {
+  color: #000;
+}
+
+.modalFormulario form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalFormulario .campo {
+  display: flex;
+  flex-direction: column;
+}
+
+.modalFormulario .campo label {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.modalFormulario .campo input,
+.modalFormulario .campo select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+/* Botones en formularios */
+.modalFormulario .botones {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.modalFormulario .botones button {
+  background: #2575fc;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Mensaje emergente */
+.modal-mensaje {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 1100;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-mensaje .modal-contenido {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-mensaje .modal-titulo {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2a466b;
+}
+
+.btn-aceptar {
+  background-color: #2a466b;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-aceptar:hover {
+  background-color: #3e5b85;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.mensaje-error {
+  background-color: #fef1f7;
+  color: #d63384;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  border-left: 3px solid #f783ac;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  line-height: 1.4;
+  max-width: 280px;
+  z-index: 10;
+}
+
+.campo-con-error input,
+.campo-con-error select,
+.campo-con-error textarea {
+  border: 1px solid #f783ac;
+  background-color: #fff0f6;
+}

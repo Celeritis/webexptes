@@ -1,0 +1,323 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario'])) {
+    header('Location: index.html');
+    exit();
+}
+
+// <link href="https://unpkg.com/tabulator-tables@5.4.4/dist/css/tabulator.min.css" rel="stylesheet">
+// <script src="https://unpkg.com/tabulator-tables@5.4.4/dist/js/tabulator.min.js"></script>
+// <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Importar SAFyC</title>
+  <link href="assets/css/tabulator.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f9ff;
+    }
+    .breadcrumb {
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      color: #333;
+    }
+    .breadcrumb a {
+      color: #2575fc;
+      text-decoration: none;
+    }
+    .file-upload {
+      margin-bottom: 1rem;
+    }
+    #panelGrid {
+      background-color: #d4f9e5;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .botonera {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .botonera select,
+    .botonera button {
+      padding: 6px 12px;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      margin: 4px;
+    }
+    .botonera button {
+      background: #2575fc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .botonera button:last-child {
+      background: #28a745;
+    }
+    .botonera button:disabled {
+      background-color: #cccccc !important;
+      cursor: not-allowed;
+    }
+    .botonera button:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+    #tablaSafyc {
+      min-height: 400px;
+      background: white;
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    #modalWebExptes {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+    }
+    #modalWebExptes .contenido {
+      background: #fff;
+      padding: 20px;
+      margin: 10vh auto;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    #modalWebExptes .spinner {
+      margin-top: 10px;
+      display: none;
+    }
+    .spinner-border {
+      width: 2rem;
+      height: 2rem;
+      border: 4px solid #ccc;
+      border-top-color: #2575fc;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="breadcrumb">
+    <a href="dashboard.php">Inicio</a> &gt; Importar SAFyC
+  </div>
+
+  <div class="file-upload">
+    <label for="archivoSafyc">Seleccionar archivo SAFyC (.txt):</label>
+    <input type="file" id="archivoSafyc" accept=".txt">
+  </div>
+
+  <div id="panelGrid">
+    <div class="botonera">
+      <div>
+        <label for="tamanoPaginacion">Filas por página:</label>
+        <select id="tamanoPaginacion" disabled>
+          <option value="10">10</option>
+          <option value="20" selected>20</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+      <div>
+        <button id="exportExcel" disabled>Exportar a Excel</button>
+        <button id="guardarAutorizados" disabled>Guardar Autorizados</button>
+      </div>
+    </div>
+    <div id="tablaSafyc"></div>
+  </div>
+
+  <div id="modalWebExptes">
+    <div class="contenido">
+      <h3 style="margin-top:0;">WebExptes informa:</h3>
+      <p id="mensajeWebExptes"></p>
+      <div class="spinner" id="spinnerWebExptes">
+        <div class="spinner-border"></div>
+      </div>
+      <button onclick="cerrarModal()" style="margin-top:15px; padding:8px 16px;">Aceptar</button>
+    </div>
+  </div>
+
+  <script src="assets/js/tabulator.min.js"></script>
+  <script src="assets/js/xlsx.full.min.js"></script>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const selectPaginacion = document.getElementById("tamanoPaginacion");
+    const btnExcel = document.getElementById("exportExcel");
+    const btnGuardar = document.getElementById("guardarAutorizados");
+    const tablaDiv = document.getElementById("tablaSafyc");
+    const modal = document.getElementById("modalWebExptes");
+    const mensaje = document.getElementById("mensajeWebExptes");
+    const spinner = document.getElementById("spinnerWebExptes");
+
+    const tabla = new Tabulator(tablaDiv, {
+      layout: "fitColumns",
+      pagination: "local",
+      paginationSize: 20,
+      responsiveLayout: true,
+      columns: [
+        { title: "✔", field: "autorizado", width: 50, hozAlign: "center", formatter: "tickCross", editor: true },
+        { title: "Cancelado", field: "cancelado", width: 110, hozAlign: "center" },
+        { title: "Año", field: "anio", width: 74 },
+        { title: "O.P.", field: "nro_comprobante", headerFilter: "input", width: 70 },
+        { title: "Expediente", field: "expediente", width: 110, headerFilter: "input" },
+        { title: "TC", field: "tc", width: 40 },
+        { title: "Tipo Comprobante", field: "tipo_comprobante", width: 40 },
+        { title: "M.Total", field: "monto_total", width: 118,  hozAlign: "right" },
+        { title: "M.Pagado", field: "monto_pagado_total", width: 118, hozAlign: "right" },
+        { title: "Descripción", field: "op_descrip", width: 150, headerFilter: "input", headerFilterFunc: "like" },
+        { title: "Cuenta Pago", field: "cuenta_pago" },
+        { title: "Nombre Cuenta", field: "nombre_cuenta_pago" },
+        { title: "CUIT", field: "cuit_benef", headerFilter: "input", headerFilterFunc: "like" },
+        { title: "Beneficiario", field: "beneficiario", headerFilter: "input", headerFilterFunc: "like" },
+        { title: "F.Ordenado", field: "fecha_ordenado" },
+        { title: "F.Pago", field: "fecha_pago" },
+        { title: "TP", field: "tp" },
+        { title: "Pago E.", field: "pago_e" },
+        { title: "Observaciones", field: "descrip_carga" }
+      ]
+    });
+
+    function traducirBotonesPaginacion() {
+      const botones = document.querySelectorAll(".tabulator-paginator button");
+      botones.forEach(btn => {
+        if (btn.textContent === "First") btn.textContent = "Primero";
+        if (btn.textContent === "Last") btn.textContent = "Último";
+        if (btn.textContent === "Prev") btn.textContent = "Anterior";
+        if (btn.textContent === "Next") btn.textContent = "Siguiente";
+      });
+    }
+
+    setTimeout(traducirBotonesPaginacion, 300);
+    tabla.on("dataLoaded", traducirBotonesPaginacion);
+    tabla.on("pageLoaded", traducirBotonesPaginacion);
+
+    selectPaginacion.addEventListener("change", function () {
+      tabla.setPageSize(parseInt(this.value));
+    });
+
+
+
+    function mostrarModal(mens, mostrarCarga = false) {
+      mensaje.textContent = mens;
+      spinner.style.display = mostrarCarga ? 'block' : 'none';
+      modal.style.display = 'block';
+    }
+
+
+    document.getElementById("archivoSafyc").addEventListener("change", function () {
+      const archivo = this.files[0];
+      if (!archivo) return;
+
+      selectPaginacion.value = "20";
+      selectPaginacion.disabled = true;
+      tabla.setPageSize(20);
+      btnExcel.disabled = true;
+      btnGuardar.disabled = true;
+
+      const formData = new FormData();
+      formData.append("archivo", archivo);
+
+      fetch("leer_safyc.php", {
+        method: "POST",
+        body: formData,
+      })
+      .then((res) => res.json())
+      .then((data) => {
+        tabla.setData(data).then(() => {
+          selectPaginacion.disabled = false;
+          btnExcel.disabled = false;
+          btnGuardar.disabled = false;
+          tablaDiv.style.pointerEvents = "auto";
+          tablaDiv.style.opacity = "1";
+        });
+      })
+      .catch((err) => console.error("Error al cargar el archivo:", err));
+    });
+
+    
+    btnExcel.addEventListener("click", function () {
+      if (tabla.getDataCount() === 0) {
+        alert("Primero cargá un archivo SAFyC.");
+        return;
+      }
+
+      const datos = tabla.getData();
+      const datosConvertidos = datos.map(fila => ({
+        "Autorizado": fila.autorizado === true ? "Sí" : "No",
+        "Cancelado": fila.cancelado,
+        "Año": fila.anio,
+        "O.P.": fila.nro_comprobante,
+        "Expediente": fila.expediente,
+        "TC": fila.tc,
+        "Tipo Comprobante": fila.tipo_comprobante,
+        "Monto Total": fila.monto_total,
+        "Monto Pagado": fila.monto_pagado_total,
+        "Descripción": fila.op_descrip,
+        "Cuenta Pago": fila.cuenta_pago,
+        "CUIT": fila.cuit_benef,
+        "Beneficiario": fila.beneficiario,
+        "Fecha Ordenado": fila.fecha_ordenado,
+        "Fecha Pago": fila.fecha_pago,
+        "TP": fila.tp,
+        "Pago E.": fila.pago_e,
+        "Observaciones": fila.descrip_carga
+      }));
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet(datosConvertidos);
+      XLSX.utils.book_append_sheet(wb, ws, "SAFYC");
+      XLSX.writeFile(wb, "safyc_export.xlsx");
+    });
+
+
+    btnGuardar.addEventListener("click", function () {
+      const autorizados = tabla.getData().filter(row => row.autorizado === true);
+      if (autorizados.length === 0) {
+        mostrarModal("No hay filas autorizadas para guardar.");
+        return;
+      }
+      btnGuardar.disabled = true;
+      mostrarModal("Guardando filas autorizadas...", true);
+      fetch("guardar_autorizados.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: autorizados })
+      })
+      .then(response => response.json())
+      .then(data => {
+        btnGuardar.disabled = false;
+        mostrarModal(data.mensaje);
+      })
+      .catch(error => {
+        btnGuardar.disabled = false;
+        console.error("Error al guardar:", error);
+        mostrarModal("Error al comunicarse con el servidor: " + error.message);
+      });
+    });
+  });
+  </script>
+
+  <script>
+    function cerrarModal() {
+      document.getElementById("modalWebExptes").style.display = "none";
+    }
+  </script>
+
+</body>
+</html>

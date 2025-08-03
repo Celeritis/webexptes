@@ -1,0 +1,27 @@
+Array
+(
+    [0] => Array
+        (
+            [tc] => FF
+            [tipo_comprobante] => COMPROBANTE DE FONDOS FIJOS
+        )
+
+    [1] => Array
+        (
+            [tc] => GA
+            [tipo_comprobante] => COMPROBANTE DE GASTO DE EJERCICIOS ANTERIORES
+        )
+
+    [2] => Array
+        (
+            [tc] => GC
+            [tipo_comprobante] => COMPROBANTE DE GASTO DEL EJERCICIO CORRIENTE
+        )
+
+    [3] => Array
+        (
+            [tc] => GE
+            [tipo_comprobante] => COMPROBANTE DE GASTO EXTRAPRESUPUESTARIO
+        )
+
+)
