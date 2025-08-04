@@ -596,12 +596,18 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
 
     export function almacenarEstadoTablaOriginal() {
       const tablaInstancia = window.tabla;
+      if (!tablaInstancia) return;
+
+      const dataCount = typeof tablaInstancia.getDataCount === 'function'
+        ? tablaInstancia.getDataCount('active')
+        : (Array.isArray(tablaInstancia.getData()) ? tablaInstancia.getData().length : 0);
 
       window.tablaEstadoOriginal = {
         // URL configurada en la instancia
-        url:   tablaInstancia.options.ajaxURL,
-        // Parámetros remotos iniciales: página y tamaño
+        url: tablaInstancia.options.ajaxURL,
+        // Parámetros remotos iniciales (página, tamaño y extras si existieran)
         params: {
+          ...(tablaInstancia.options.ajaxParams || {}),
           page: tablaInstancia.getPage(),
           size: tablaInstancia.getPageSize(),
         },
@@ -611,6 +617,8 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
         // Estado de filtros y orden antes de la búsqueda
         filters: tablaInstancia.getFilters(),
         sorters: tablaInstancia.getSorters(),
+        // Cantidad de registros cargados inicialmente
+        dataCount,
       };
     }
 
@@ -631,13 +639,9 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
       tablaInstancia.clearSort();
 
       // 2. Volver a cargar datos en modo remoto con URL y params guardados
-      
-      
       try {
-        await tablaInstancia.setData(estado.url, {
-          page: estado.page,
-          size: estado.size,
-        });
+        tablaInstancia.setPageSize(estado.size);
+        await tablaInstancia.setData(estado.url, estado.params);
 
         // 3. Restaurar orden y filtros si los había
         if (estado.sorters?.length) {
@@ -649,6 +653,11 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
 
         // 4. Finalmente, ir a la página original
         await tablaInstancia.setPage(estado.page);
+
+        // 5. Mostrar cantidad de registros restaurados si está disponible
+        if (typeof estado.dataCount !== 'undefined') {
+          mostrarMensaje(`🔄 Tabla restaurada (${estado.dataCount} registros)`);
+        }
       } catch (err) {
         console.error("Error restaurando datos remotos:", err);
       } finally {
