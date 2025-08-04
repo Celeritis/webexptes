@@ -7,6 +7,9 @@ import { mostrarMensaje, mostrarMensajeConCancelar,
         from './utilidades_abm_op.js';
         
 export function mostrarBusquedaAvanzada() {
+    // Guardar el estado actual del Tabulator antes de aplicar filtros avanzados
+    almacenarEstadoTablaOriginal();
+
     document.getElementById("formBusquedaAvanzada").reset();
     limpiarTodosLosErrores();
     document.getElementById("modalBusquedaAvanzada").style.display = "flex";
