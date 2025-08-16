@@ -1,4 +1,4 @@
-/** bus_adv_abm_op.js: Funciones para la búsqueda avanzada */
+/** bus_adv_abm_op.js:  Funciones para la búsqueda avanzada */
 
 import { mostrarError, limpiarTodosLosErrores } from './validaciones_abm_op.js';
 import { mostrarMensaje, mostrarMensajeConCancelar, 
@@ -334,4 +334,3 @@ function actualizarProgresoUI(ui, obtenidos, total, pagina) {
         }
     }
 }
-
