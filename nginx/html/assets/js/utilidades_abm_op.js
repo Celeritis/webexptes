@@ -686,9 +686,9 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
       }
     }
 
-    //  FIN RDRJOB
+    //  FIN RDRJOB  
     // utilidades_abm_op.js
-    
+
     export async function quitarFiltros() {
       const btn = document.getElementById('btnQuitarFiltros');
       if (btn) btn.style.display = 'none';
