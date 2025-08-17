@@ -1,4 +1,4 @@
-/** utilidades_abm_op.js : Utilidades varias para abm_op2.php  11/07/2025  21:47   **/
+/** utilidades_abm_op.js : Utilidades varias para abm_op2.php  16/08/2025  22:09   **/
 
 import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
 
@@ -687,51 +687,59 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
     }
 
     //  FIN RDRJOB  
-    // utilidades_abm_op.js
+    // utilidades_abm_op.js 16/05/25
 
     export async function quitarFiltros() {
-      const btn = document.getElementById('btnQuitarFiltros');
-      if (btn) btn.style.display = 'none';
+  // Ocultar el botón inmediatamente
+  const btn = document.getElementById('btnQuitarFiltros');
+  if (btn) btn.style.display = 'none';
 
-      const estado = window.tablaEstadoOriginal;
-      if (!estado) {
-        console.warn('No existe estado original guardado para restaurar.');
-        return;
-      }
+  const estado = window.tablaEstadoOriginal;
+  if (!estado) {
+    console.warn('No existe estado original guardado para restaurar.');
+    return;
+  }
 
-      const tablaInstancia = window.tabla;
+  const tabla = window.tabla;
 
-      // 1. Limpiar filtros y ordenamientos locales
-      tablaInstancia.clearFilter(true);
-      tablaInstancia.clearSort(true);
+  // 1. Limpiar filtros y ordenamientos actuales (incluye filtros de cabecera)
+  tabla.clearFilter(true);
+  tabla.clearSort(true);
 
-      try {
-        // 2. Cargar de nuevo el conjunto de datos original
-        //    (empieza en la página 1 para que Tabulator calcule de nuevo los límites)
-        await tablaInstancia.setData(estado.url, {
-          page: 1,
-          size: estado.size,
-        });
-
-        // 3. Restaurar orden y filtros guardados (si existían)
-        if (estado.sorters && estado.sorters.length > 0) {
-          tablaInstancia.setSort(estado.sorters);
-        }
-        if (estado.filters && estado.filters.length > 0) {
-          tablaInstancia.setFilter(estado.filters);
-        }
-
-        // 4. Obtener el máximo de páginas y ajustar la página solicitada
-        const maxPage = tablaInstancia.getPageMax() || 1;
-        const paginaDestino = Math.min(Math.max(estado.page, 1), maxPage);
-        await tablaInstancia.setPage(paginaDestino);
-      } catch (err) {
-        console.error('Error restaurando datos:', err);
-      } finally {
-        // 5. Limpiar el estado almacenado para evitar reuso accidental
-        window.tablaEstadoOriginal = null;
-      }
+  try {
+    // 2. Restaurar ordenamiento y filtros ANTES de recargar,
+    //    de modo que Tabulator los envíe en la misma petición AJAX
+    if (estado.sorters?.length) {
+      tabla.setSort(estado.sorters);
     }
+    if (estado.filters?.length) {
+      tabla.setFilter(estado.filters);
+    }
+
+    // 3. Recargar datos desde el backend con la URL original.
+    //    Empieza en la página 1 para que Tabulator recompute last_page
+    await tabla.setData(estado.url, {
+      page: 1,
+      size: estado.size
+    });
+
+    // 4. Restaurar el tamaño de página por si el usuario lo modificó
+    if (estado.size !== tabla.getPageSize()) {
+      await tabla.setPageSize(estado.size);
+    }
+
+    // 5. Calcular la página válida y navegar a ella
+    const maxPage = tabla.getPageMax() || 1;
+    const target = Math.min(Math.max(estado.page, 1), maxPage);
+    await tabla.setPage(target);
+  } catch (err) {
+    console.error('Error restaurando datos:', err);
+  } finally {
+    // Descartar el estado guardado para evitar reutilizarlo accidentalmente
+    window.tablaEstadoOriginal = null;
+  }
+}
+
 
     export async function V4_quitarFiltros() {
       // 1. Muestra el modal de “Actualizando datos”
