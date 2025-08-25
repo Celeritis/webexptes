@@ -57,6 +57,8 @@ try {
 
     $offset = ($page - 1) * $size;
 
+    error_log("RDR listar_op2.php => page={$page}, size={$size}, offset={$offset}");
+     
     // INSERTAR AQUÍ EL LOG DE DEPURACIÓN
     //error_log("Paginación: Página={$page}, Registros por página={$size}, Offset={$offset}");
     
@@ -93,27 +95,34 @@ try {
              error_log("Depuración de filtro: Campo='" . $field . "', Valor='" . $value . "'");
             // FIN DEL MENSAJE DE DEPURACIÓN
 
-            //  Determinar el operador según el campo
-            if ($field === 'nro_comprobante') {
-            //if ($field === 'nro_comprobante' || $field === 'expediente') { 
-                    // Búsqueda más flexible para nro_comprobante y expediente
-                    // Considerar: valor exacto, con trim, y con padding izquierdo
-                     $where[] = "(
-                            `$field` = ? OR 
-                            TRIM(`$field`) = ? OR 
-                            CAST(`$field` AS UNSIGNED) = CAST(? AS UNSIGNED)
-                        )";
-                    $params[] = $value;
-                    $params[] = $value;
-                    $params[] = $value;
-                    $types .= 'sss';
-            } else {
-                    // Para otros campos: búsqueda parcial (LIKE)
-                    $where[] = "`$field` LIKE ?";
-                    $params[] = '%' . $value . '%';
-                    $types .= 's';
-            }
+            // Soporte de operador enviado por el frontend (rango: >=, <=, >, <, =)
+            $op = isset($filter['operator']) ? trim($filter['operator']) : null;
+            $opValido = in_array($op, ['=', '>=', '<=', '>', '<'], true);
 
+            if ($opValido) {
+                // Ej.: fecha_pago >= ?  /  fecha_pago <= ?
+                $where[]  = "`$field` $op ?";
+                $params[] = $value;
+                $types   .= 's';
+
+            } elseif ($field === 'nro_comprobante') {
+                // Caso especial nro_comprobante (búsqueda flexible/exacta)
+                $where[] = "(
+                        `$field` = ? OR 
+                        TRIM(`$field`) = ? OR 
+                        CAST(`$field` AS UNSIGNED) = CAST(? AS UNSIGNED)
+                    )";
+                $params[] = $value;
+                $params[] = $value;
+                $params[] = $value;
+                $types   .= 'sss';
+
+            } else {
+                // Resto de campos: búsqueda parcial (LIKE)
+                $where[]  = "`$field` LIKE ?";
+                $params[] = '%' . $value . '%';
+                $types   .= 's';
+            }
         }
     }
 

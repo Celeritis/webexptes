@@ -591,8 +591,6 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
       }
 
 
-     //  RDRJOB  29/07/25 17:22
-
     export function almacenarEstadoTablaOriginal() {
       const tablaInstancia = window.tabla;
 
@@ -613,7 +611,8 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
       };
     }
 
-    export async function V1_quitarFiltros() {
+    //  Esta es la peor version 
+    export async function V10_quitarFiltros() {
       const btn = document.getElementById("btnQuitarFiltros");
       if (btn) btn.style.display = "none";
 
@@ -657,7 +656,7 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
     }
 
   
-    export async function V2_quitarFiltros() {
+    export async function V20_quitarFiltros() {
       mostrarModalTemporizado();
 
       try {
@@ -686,10 +685,58 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
       }
     }
 
-    //  FIN RDRJOB  
-    // utilidades_abm_op.js 16/05/25
+ export async function V30_quitarFiltros() {
+  const tabla = window.tabla;
 
-    export async function quitarFiltros() {
+  // 1. Capturamos el estado actual (página, tamaño, filtros y sorters) de la tabla
+  const paginaOriginal   = tabla.getPage();
+  const tamPaginaOriginal = tabla.getPageSize();
+  const filtrosOriginales = tabla.getFilters();
+  const sortersOriginales = tabla.getSorters();
+
+  // 2. Ocultamos el botón "Quitar filtros"
+  const btn = document.getElementById('btnQuitarFiltros');
+  if (btn) btn.style.display = 'none';
+
+  // 3. Vaciar completamente los datos locales y limpiar filtros/ordenamientos
+  await tabla.replaceData([]);      // Sale del modo local
+  tabla.clearFilter(true);
+  tabla.clearSort(true);
+
+  try {
+    // 4. Recargar desde el backend usando la URL original y paginación remota
+    //    Empieza en la página 1 con el mismo tamaño de página que usabas
+    await tabla.setData(tabla.options.ajaxURL, {
+      page: 1,
+      size: tamPaginaOriginal,
+      // Si tu backend acepta sorters/filters por AJAX, también puedes pasarlos aquí.
+    });
+
+    // 5. Restaurar tamaño de página si el usuario lo cambió
+    if (tabla.getPageSize() !== tamPaginaOriginal) {
+      await tabla.setPageSize(tamPaginaOriginal);
+    }
+
+    // 6. Volver a aplicar ordenamientos y filtros que tenías antes de la búsqueda
+    if (sortersOriginales.length) {
+      tabla.setSort(sortersOriginales);
+    }
+    if (filtrosOriginales.length) {
+      tabla.setFilter(filtrosOriginales);
+    }
+
+    // 7. Ir a la página original (ajustando al rango disponible)
+    const maxPag = tabla.getPageMax() || 1;
+    const destino = Math.min(Math.max(paginaOriginal, 1), maxPag);
+    await tabla.setPage(destino);
+  } catch (err) {
+    console.error('Error restaurando datos remotos:', err);
+  }
+}
+
+
+
+    export async function V40_quitarFiltros() {
   // Ocultar el botón inmediatamente
   const btn = document.getElementById('btnQuitarFiltros');
   if (btn) btn.style.display = 'none';
@@ -740,8 +787,8 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
   }
 }
 
-
-    export async function V4_quitarFiltros() {
+    // Version  Original
+    export async function V50_quitarFiltros() {
       // 1. Muestra el modal de “Actualizando datos”
       mostrarModalTemporizado();
 
@@ -763,6 +810,30 @@ import { limpiarTodosLosErrores } from './validaciones_abm_op.js';
       const btn = document.getElementById('btnQuitarFiltros');
       if (btn) btn.style.display = 'none';
     }
+
+    export async function quitarFiltros() {
+      // 1. Muestra el modal de “Actualizando datos”
+      mostrarModalTemporizado();
+
+      // 2. Ejecuta recarga AJAX + mínimo 3s de espera
+      try {
+        await Promise.all([
+          recargarTablaDesdeBackend(), 
+          window.tabla.setPage(window.ultimaPaginaNAV),
+          new Promise(res => setTimeout(res, 55)) 
+        ]);
+      } catch (err) {
+        console.error('Fallo al recargar tabla:', err);
+      } finally {
+        // 3. Oculta el modal cuando termine todo
+        esconderModalTemporizado();
+      }
+
+      // 4. Ocultar el botón de quitar filtros
+      const btn = document.getElementById('btnQuitarFiltros');
+      if (btn) btn.style.display = 'none';
+    }
+
 
     // Función para mostrar mensaje con cancelar
     export function mostrarMensajeConCancelar(texto) {

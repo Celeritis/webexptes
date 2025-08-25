@@ -19,6 +19,9 @@ export function cerrarBusquedaAvanzada() {
     document.getElementById("modalBusquedaAvanzada").style.display = "none";
 }
 
+
+// RDRJOB - tengo que analizar por qué no realiza la busqueda entre dos fechas
+
 export async function aplicarBusquedaAvanzada() {
     if (window.busquedaEnCurso) {
         mostrarMensaje("⏳ Ya hay una búsqueda en curso. Espere a que finalice.", "warning");
@@ -166,7 +169,7 @@ export async function aplicarBusquedaAvanzada() {
         document.body.appendChild(progresoUI.container);
 
         // 5. Bucle principal de obtención de datos
-        while (window.continuar && pagina <= 100) { // Límite de seguridad
+        while (window.continuar && pagina <= 1000) { // Límite de seguridad
             try {
                 
                 actualizarProgresoUI(progresoUI, todosLosDatos.length, totalRegistros, pagina);

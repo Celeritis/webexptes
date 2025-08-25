@@ -1030,6 +1030,8 @@ export async function ver_002_agregarNuevaFilaTabulator(datos) {
 }
 
 // RDRJOB
+
+
 export async function agregarNuevaFilaTabulator(datos) {
   // 1) Calcular 'cancelado' como lo hace el backend
   const monto_total        = parseFloat(datos.monto_total)        || 0;
