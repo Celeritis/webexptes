@@ -22,3 +22,8 @@ php/
 wedev/Tablas
 wedev/logs
 act-we.sh
+nginx/html/encriptar.php
+nginx/html/encriptar_claves.php
+nginx/html/conn-encript.php
+nginx/html/conn.php
+nginx/html/conocer_clave.php
